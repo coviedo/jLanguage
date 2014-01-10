@@ -27,11 +27,6 @@ class jLanguage
 	private $lang_data = array();
 
 	/**
-	 * @param $lang_data - array : JSON file name to be charged;
-	 */
-	private $lang_file = null;
-
-	/**
 	 * @param $lang_data - boolean : if data has been loaded;
 	 */
 	private $data_loaded = false;
@@ -61,12 +56,6 @@ class jLanguage
 		// Load shutdown function.
 		if($this->config['auto_load'])
 			register_shutdown_function(array($this, "shutdown"));
-
-		// Select lang file.
-		if($this->config['auto_location'])
-			$this->lang_file = @substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-		else
-			$this->lang_file = $this->config['lang_default'];
 
 		ob_start();
 	}
@@ -107,26 +96,20 @@ class jLanguage
 		if(!is_dir($this->config['base_dir']))
 			die('Cannot find dir: <b>' . $this->config['base_dir'] . '</b>');
 
-		$dir = opendir($this->config['base_dir']);
+		$found = false;
+		$data = array();
 
-		while ($file = readdir($dir)) 
-		{
-			$file_location = $this->config['base_dir'] . DIRECTORY_SEPARATOR . $file;
+		if($this->config['auto_location'] && file_exists($this->config['base_dir'] . DIRECTORY_SEPARATOR . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '.json'))
+			$data = $this->load_json_file($this->config['base_dir'] . DIRECTORY_SEPARATOR . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '.json');
+		if($this->config['auto_location'] && file_exists($this->config['base_dir'] . DIRECTORY_SEPARATOR . @substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) . '.json'))
+			$data = $this->load_json_file($this->config['base_dir'] . DIRECTORY_SEPARATOR . @substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) . '.json');
+		else if(file_exists($this->config['base_dir'] . DIRECTORY_SEPARATOR . $this->config['lang_default'] . '.json'))
+			$data = $this->load_json_file($this->config['base_dir'] . DIRECTORY_SEPARATOR . $this->config['lang_default'] . '.json');
 
-			if($this->get_file_extension($file) == 'json') 
-			{
-				if(file_exists($this->config['base_dir'] . DIRECTORY_SEPARATOR . $this->lang_file . '.json') 
-				   && $this->lang_file . '.json' == $file)
-				{
-					$data = $this->load_json_file($file_location);
-
-					if(!is_null($data))
-						$this->lang_data = array_merge($data, $this->lang_data);
-					else
-						die("Can't load json file: " . $file_location);
-				}
-			}
-		}
+		if(empty($data) || is_null($data))
+			die("Couldn't load the json file specified");
+		else
+			$this->lang_data = array_merge($data, $this->lang_data);
 
 		$this->data_loaded = true;
 	}
