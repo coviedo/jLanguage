@@ -76,3 +76,14 @@ __Note 2:__ In case that the load function it's not automatically, you can load 
 ```php
 $jLang->load();
 ```
+
+# Language support
+
+If you enable the option `auto-location` in the jLanguage configuration, you can to use a multiple files of same language but for different locations, __for example:__
+
+`es.json` => Spanish.
+`en.json` => English.
+`ch.json` => Chinese.
+
+(See http://www.science.co.il/Language/Codes.asp for more information about language codes).
+

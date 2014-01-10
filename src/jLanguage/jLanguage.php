@@ -99,8 +99,6 @@ class jLanguage
 		$found = false;
 		$data = array();
 
-		if($this->config['auto_location'] && file_exists($this->config['base_dir'] . DIRECTORY_SEPARATOR . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '.json'))
-			$data = $this->load_json_file($this->config['base_dir'] . DIRECTORY_SEPARATOR . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '.json');
 		if($this->config['auto_location'] && file_exists($this->config['base_dir'] . DIRECTORY_SEPARATOR . @substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) . '.json'))
 			$data = $this->load_json_file($this->config['base_dir'] . DIRECTORY_SEPARATOR . @substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) . '.json');
 		else if(file_exists($this->config['base_dir'] . DIRECTORY_SEPARATOR . $this->config['lang_default'] . '.json'))
