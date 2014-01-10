@@ -162,23 +162,24 @@ class jLanguage
 	 */
 	private function parse($htmldata)
 	{
-		foreach ($this->lang_data as $_key => $_value) 
+		foreach ($this->lang_data as $key => $value) 
 		{
-			if(!is_array($_value))
-				$htmldata = str_replace('[[' . $_key . ']]', $_value, $htmldata);
-		}
+			/*echo $key . ' => ';
+			echo print_r($value);*/
 
-		foreach ($this->lang_select as $key => $value) 
-		{
-			if(!empty($this->lang_data[$value]))
+			if(!$this->lang_data[$key])
+				continue;
+
+			if(is_array($value))
 			{
-				if(is_array($this->lang_data[$value]))
+				foreach ($value as $k => $v) 
 				{
-					foreach ($this->lang_data[$value] as $_key => $_value) 
-					{
-						$htmldata = str_replace('[[' . $_key . ']]', $_value, $htmldata);
-					}
+					$htmldata = str_replace('[[' . $k . ']]', $v, $htmldata);
 				}
+			}
+			else
+			{
+				$htmldata = str_replace('[[' . $key . ']]', $value, $htmldata);
 			}
 		}
 
